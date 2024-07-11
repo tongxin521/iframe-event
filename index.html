@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 50%;
+            margin: 200px auto;
+        }
+        iframe {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <script>
+        
+        
+        function bubbleIframeMouseMove(iframe){
+            // Save any previous onmousemove handler
+            var existingOnMouseMove = iframe.contentWindow.onmousemove;
+
+            // Attach a new onmousemove listener
+            iframe.contentWindow.onmousemove = function(e){
+                if(existingOnMouseMove) existingOnMouseMove(e);
+            
+                var evt = document.createEvent("MouseEvents");
+            
+                var boundingClientRect = iframe.getBoundingClientRect();
+                evt.initMouseEvent( 
+                    "mousemove", 
+                    true,
+                    false,
+                    window,
+                    e.detail,
+                    e.screenX,
+                    e.screenY, 
+                    e.clientX + boundingClientRect.left, 
+                    e.clientY + boundingClientRect.top, 
+                    e.ctrlKey, 
+                    e.altKey,
+                    e.shiftKey, 
+                    e.metaKey,
+                    e.button, 
+                    null
+                );
+            
+                iframe.dispatchEvent(evt);
+            };
+        }
+        
+        window.onload = function() {
+            var myIframe = document.getElementById("myIframe");
+            bubbleIframeMouseMove(myIframe);
+            document.addEventListener('mousemove', function (e) {
+                console.log(e.clientX);
+                const span = document.querySelector('span');
+                span.innerText = e.clientX;
+            });
+        }
+    </script>
+    <div>
+        <p>
+            鼠标的位置：<span></span>
+        </p>
+        <iframe
+            src="http://ailabel-dev.bj.bcebos.com/67d7b1cd-4b47-451b-b51f-c9e260445edd.pdf?authorization=bce-auth-v1%2FALTAKCeKSCUZbxVsBD6D8uo1wk%2F2024-07-11T02%3A13%3A26Z%2F-1%2Fhost%2F24b09a5feb690512a3001f15b2f499e2cf98aa375dadb6954678a5448213c1b2"
+            width="100%"
+            height="400px"
+            id="myIframe"
+        />
+    </div>
+
+    
+    
+</body>
+
+</html>
